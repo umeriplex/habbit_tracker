@@ -16,6 +16,7 @@ class AnimatedTask extends StatefulWidget {
 class _AnimatedTaskState extends State<AnimatedTask> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _curveAnimation;
+  var _isCheckCompleted = false;
 
   @override
   void initState() {
@@ -24,26 +25,41 @@ class _AnimatedTaskState extends State<AnimatedTask> with SingleTickerProviderSt
       vsync: this,
     );
     _curveAnimation = _controller.drive(CurveTween(curve: Curves.easeInOut));
+    _controller.addStatusListener(_updateAnimationStatus);
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _controller.removeStatusListener(_updateAnimationStatus);
     super.dispose();
   }
 
   void _handleTapDown(TapDownDetails details) {
     if(_controller.status != AnimationStatus.completed){
       _controller.forward();
-    }else{
+    }else if (!_isCheckCompleted){
       _controller.value = 0.0;
     }
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp() {
     if(_controller.status != AnimationStatus.completed){
       _controller.reverse();
+    }
+  }
+
+  void _updateAnimationStatus(AnimationStatus status){
+    if(status == AnimationStatus.completed){
+      if(mounted){
+        setState(() =>_isCheckCompleted = true);
+      }
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if(mounted){
+          setState(() => _isCheckCompleted = false);
+        }
+      });
     }
   }
 
@@ -51,20 +67,24 @@ class _AnimatedTaskState extends State<AnimatedTask> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
+      onTapUp: (_) =>_handleTapUp(),
+      onTapCancel: _handleTapUp,
       child: AnimatedBuilder(
         animation: _curveAnimation,
         builder: (context, child) {
           final themeData = AppTheme.of(context);
+          final progress = _curveAnimation.value;
+          final hasCompleted = progress == 1.0;
+          final iconColor = hasCompleted ? themeData.accentNegative : themeData.taskIcon;
           return Stack(
             children: [
               TasksCompRing(
-                progress: _curveAnimation.value,
+                progress: progress,
               ),
               Positioned.fill(
                 child: CenteredSvgIcon(
-                  iconName: widget.iconName,
-                  color: themeData.taskIcon,
+                  iconName: _isCheckCompleted && hasCompleted ? AppAssets.check : widget.iconName,
+                  color: iconColor,
                 ),
               ),
             ],
