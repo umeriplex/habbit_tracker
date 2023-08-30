@@ -3,6 +3,8 @@ import 'package:habit_tracker_flutter/constants/app_assets.dart';
 import 'package:habit_tracker_flutter/constants/app_colors.dart';
 import 'package:habit_tracker_flutter/ui/home/home_page.dart';
 import 'package:habit_tracker_flutter/ui/theming/app_theme.dart';
+import 'package:habit_tracker_flutter/ui/three_d_button/animated_button.dart';
+import 'package:habit_tracker_flutter/ui/three_d_button/buttons_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +22,7 @@ class MyApp extends StatelessWidget {
       ),
       home: AppTheme(
         data: AppThemeData.defaultWithSwatch(AppColors.red),
-        child: HomePage(),
+        child: ButtonsView(),
       ),
     );
   }

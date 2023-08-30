@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:habit_tracker_flutter/constants/app_assets.dart';
 import 'package:habit_tracker_flutter/ui/common_widgets/centered_svg_icon.dart';
 import 'package:habit_tracker_flutter/ui/tasks/tasks_compl_ring.dart';
-
 import '../theming/app_theme.dart';
 
 class AnimatedTask extends StatefulWidget {
