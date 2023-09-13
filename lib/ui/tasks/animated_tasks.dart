@@ -6,7 +6,9 @@ import '../theming/app_theme.dart';
 
 class AnimatedTask extends StatefulWidget {
   final String iconName;
-  const AnimatedTask({Key? key, required this.iconName}) : super(key: key);
+  final bool isCompleted;
+  final ValueChanged<bool>? onComplete;
+  const AnimatedTask({Key? key, required this.iconName, required this.isCompleted, this.onComplete}) : super(key: key);
 
   @override
   State<AnimatedTask> createState() => _AnimatedTaskState();
@@ -36,9 +38,10 @@ class _AnimatedTaskState extends State<AnimatedTask> with SingleTickerProviderSt
   }
 
   void _handleTapDown(TapDownDetails details) {
-    if(_controller.status != AnimationStatus.completed){
+    if(!widget.isCompleted && _controller.status != AnimationStatus.completed){
       _controller.forward();
     }else if (!_isCheckCompleted){
+      widget.onComplete?.call(false);
       _controller.value = 0.0;
     }
   }
@@ -51,6 +54,7 @@ class _AnimatedTaskState extends State<AnimatedTask> with SingleTickerProviderSt
 
   void _updateAnimationStatus(AnimationStatus status){
     if(status == AnimationStatus.completed){
+      widget.onComplete?.call(true);
       if(mounted){
         setState(() =>_isCheckCompleted = true);
       }
@@ -72,7 +76,7 @@ class _AnimatedTaskState extends State<AnimatedTask> with SingleTickerProviderSt
         animation: _curveAnimation,
         builder: (context, child) {
           final themeData = AppTheme.of(context);
-          final progress = _curveAnimation.value;
+          final progress = widget.isCompleted ? 1.0 : _curveAnimation.value;
           final hasCompleted = progress == 1.0;
           final iconColor = hasCompleted ? themeData.accentNegative : themeData.taskIcon;
           return Stack(
