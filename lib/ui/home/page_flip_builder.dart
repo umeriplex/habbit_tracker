@@ -87,6 +87,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdates,
       onHorizontalDragEnd: _handleDragEnds,
