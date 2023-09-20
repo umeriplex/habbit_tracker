@@ -5,6 +5,7 @@ import 'package:habit_tracker_flutter/ui/home/tasks_grid_page.dart';
 import 'package:hive/hive.dart';
 import '../../models/task.dart';
 import '../../presistance/hive_data_store.dart';
+import '../sliding_panel/sliding_panel_animator.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -14,6 +15,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _pageFlipKey = GlobalKey<PageFlipBuilderState>();
+  final _frontPageLeftSlidingAnimatorKey = GlobalKey<SlidingPanelAnimatorState>();
+  final _frontPageRightSlidingAnimatorKey = GlobalKey<SlidingPanelAnimatorState>();
+  final _backPageLeftSlidingAnimatorKey = GlobalKey<SlidingPanelAnimatorState>();
+  final _backPageRightSlidingAnimatorKey = GlobalKey<SlidingPanelAnimatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,8 @@ class _HomePageState extends State<HomePage> {
                 onFlip: (){
                   _pageFlipKey.currentState?.flip();
                 },
+                leftAnimatorKey: _frontPageLeftSlidingAnimatorKey,
+                rightAnimatorKey: _frontPageRightSlidingAnimatorKey,
               );
             },
           ),
@@ -45,6 +52,8 @@ class _HomePageState extends State<HomePage> {
                 onFlip: (){
                   _pageFlipKey.currentState?.flip();
                 },
+                leftAnimatorKey: _backPageLeftSlidingAnimatorKey,
+                rightAnimatorKey: _backPageRightSlidingAnimatorKey,
               );
             },
           ),
