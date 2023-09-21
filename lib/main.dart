@@ -6,7 +6,9 @@ import 'package:habit_tracker_flutter/presistance/hive_data_store.dart';
 import 'package:habit_tracker_flutter/ui/flip_card_challenge/card_view.dart';
 import 'package:habit_tracker_flutter/ui/home/home_page.dart';
 import 'package:habit_tracker_flutter/ui/theming/app_theme.dart';
+import 'package:habit_tracker_flutter/ui/theming/app_theme_manager.dart';
 
+import 'models/front_or_back_side.dart';
 import 'models/task.dart';
 
 Future<void> main() async {
@@ -33,9 +35,22 @@ Future<void> main() async {
     ],
     force: false,
   );
+
+  final frontThemeSettings = await dataStore.appThemeSettings(side: FrontOrBackSide.front);
+  final backThemeSettings = await dataStore.appThemeSettings(side: FrontOrBackSide.back);
   runApp(ProviderScope(
     overrides: [
-      dataStoreProvider.overrideWithValue(dataStore)
+      dataStoreProvider.overrideWithValue(dataStore),
+      frontThemeManagerProvider.overrideWith((ref) => AppThemeManager(
+        hiveStoreData: ref.watch(dataStoreProvider),
+        side: FrontOrBackSide.front,
+        appThemeSettings: frontThemeSettings,
+      )),
+      backThemeManagerProvider.overrideWith((ref) => AppThemeManager(
+        hiveStoreData: ref.watch(dataStoreProvider),
+        side: FrontOrBackSide.back,
+        appThemeSettings: backThemeSettings,
+      )),
     ],
     child: MyApp()
   ));
